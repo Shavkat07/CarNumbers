@@ -174,7 +174,7 @@ def main():
 			break
 		else:
 			print("Неверный выбор. Попробуйте снова.")
-			time.sleep(2)
+			time.sleep(1)
 
 
 if __name__ == "__main__":

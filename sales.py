@@ -76,12 +76,11 @@ class Sale:
 
 	def delete_sale(self, sale_id):
 
-
 		self.cursor.execute("DELETE FROM sales WHERE id = ?", (sale_id,))
 		self.conn.commit()
 		print(f"Продажа с ID {sale_id} удален.")
 
-	def get_sale(self, sale_id):
+	def get_sale(self, sale_id) -> dict:
 		self.cursor.execute("SELECT * FROM sales WHERE id = ?", (sale_id,))
 		sale = self.cursor.fetchone()
 		if sale:
@@ -91,19 +90,16 @@ class Sale:
 				"user_id": sale[2],
 				"sale_date": sale[3]
 			}
-		return None
+		return {}
 
-	def get_sales_by_user_id(self, user_id):
+	def get_sales_by_user_id(self, user_id) -> list[dict] :
 		self.cursor.execute("SELECT * FROM sales WHERE user_id = ?", (user_id,))
 		sales = self.cursor.fetchall()
-		for sale in sales:
-			print(f"ID: {sale[0]}, ID номерного знака: {sale[1]}, ID Пользователя: {sale[2]}, Дата продажи: {sale[3]}")
+		return sales
 
-	def list_sales(self):
+	def list_sales(self) -> list[dict]:
 		self.cursor.execute("SELECT * FROM sales")
 		sales = self.cursor.fetchall()
-		for sale in sales:
-			print(f"ID: {sale[0]}, ID номерного знака: {sale[1]}, ID Пользователя: {sale[2]}, Дата продажи: {sale[3]}")
 
 	def close_connection(self):
 		"""Закрыть соединение с базой данных"""

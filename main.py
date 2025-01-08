@@ -4,17 +4,19 @@ from sales import Sale
 import os
 import time
 from datetime import datetime
-
+import json
 
 def clear_console():
 	command = 'cls' if os.name == 'nt' else 'clear'
 	os.system(command)
+
 
 def back_to_menu():
 	while True:
 		choice = int(input("Enter 0 to back to the menu: "))
 		if choice == 0:
 			break
+
 
 def main_menu():
 	print("\n=== Главное меню ===")
@@ -44,7 +46,8 @@ def user_menu(user_manager):
 			user_manager.add_user(name, address)
 		elif choice == "2":
 			user_id = int(input("Введите ID пользователя: "))
-			user_manager.get_user(user_id)
+			user = user_manager.get_user(user_id)
+			print(f"ID: {user[0]}, Имя: {user[1]}, Адрес: {user[2]}, Купленные номера: {user[3]}")
 		elif choice == "3":
 			user_id = int(input("Введите ID пользователя: "))
 			name = input("Новое имя (нажмите Enter, чтобы пропустить): ")
@@ -54,7 +57,10 @@ def user_menu(user_manager):
 			user_id = int(input("Введите ID пользователя: "))
 			user_manager.delete_user(user_id)
 		elif choice == "5":
-			user_manager.list_users()
+			users = user_manager.list_users()
+			for user in users:
+				purchased_plates = json.loads(user[3]) if user[3] else []
+				print(f"ID: {user[0]}, Имя: {user[1]}, Адрес: {user[2]}, Купленные номера: {purchased_plates}")
 			back_to_menu()
 		elif choice == "0":
 			break
@@ -80,21 +86,27 @@ def plate_menu(plate_manager):
 			plate_number = input("Введите номерной знак: ").upper().strip()
 			price = float(input("Введите цену: "))
 			plate_manager.add_number_plate(plate_number, price)
+
 		elif choice == "2":
 			plate_id = int(input("Введите ID номерного знака: "))
 			plate_manager.delete_number_plate(plate_id)
+
 		elif choice == "3":
 			plate_id = int(input("Введите ID номерного знака: "))
-			plate = plate_manager.get_number_plate_by_id(plate_id)
+			plate = plate_manager.get_plate_by_id(plate_id)
 			if plate:
 				print(
 					f"ID: {plate['id']}, Номер: {plate['plate_number']}, Цена: {plate['price']}, Статус: {plate['status']}")
 				back_to_menu()
 			else:
 				print("Номерной знак не найден.")
+
 		elif choice == "4":
-			plate_manager.list_number_plates()
+			plates = plate_manager.list_plates()
+			for plate in plates:
+				print(f"ID: {plate[0]}, Номерной знак: {plate[1]}, Цена: {plate[2]}, Статус: {plate[3]}")
 			back_to_menu()
+
 		elif choice == "0":
 			break
 		else:
@@ -122,12 +134,19 @@ def sale_menu(sale_manager):
 			                      sale_date=sale_date if sale_date else datetime.now().strftime("%d-%m-%Y"))
 
 		elif choice == "2":
-			sale_manager.list_sales()
+			sales = sale_manager.list_sales()
+			for sale in sales:
+				print(
+					f"ID: {sale[0]}, ID номерного знака: {sale[1]}, ID Пользователя: {sale[2]}, Дата продажи: {sale[3]}")
 			back_to_menu()
 
 		elif choice == "3":
 			user_id = int(input("Введите ID пользователя: "))
-			sale_manager.get_sales_by_user_id(user_id=user_id)
+			sales = sale_manager.get_sales_by_user_id(user_id=user_id)
+			for sale in sales:
+				print(
+					f"ID: {sale[0]}, ID номерного знака: {sale[1]}, ID Пользователя: {sale[2]}, Дата продажи: {sale[3]}")
+
 			back_to_menu()
 
 		elif choice == "4":

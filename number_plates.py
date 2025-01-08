@@ -31,7 +31,7 @@ class CarPlate:
 		self.conn.commit()
 		print(f"Номерной знак с ID {plate_id} удален.")
 
-	def get_number_plate_by_id(self, plate_id):
+	def get_plate_by_id(self, plate_id) -> dict:
 		self.cursor.execute("SELECT * FROM number_plates where id = ?", (plate_id,))
 		plate = self.cursor.fetchone()
 		if plate:
@@ -41,7 +41,7 @@ class CarPlate:
 				"price": plate[2],
 				"status": plate[3]
 			}
-	def get_number_plate_by_number(self, plate_number):
+	def get_plate_by_number(self, plate_number) -> dict:
 		if plate_number.isupper():
 			self.cursor.execute("SELECT * FROM number_plates where plate_number = ?", (plate_number,))
 			plate = self.cursor.fetchone()
@@ -55,11 +55,10 @@ class CarPlate:
 		else:
 			print("Номерной знак должен быть с заглавными буквами.")
 
-	def list_number_plates(self):
+	def list_plates(self) -> list[dict]:
 		self.cursor.execute("SELECT * FROM number_plates")
 		plates = self.cursor.fetchall()
-		for plate in plates:
-			print(f"ID: {plate[0]}, Номерной знак: {plate[1]}, Цена: {plate[2]}, Статус: {plate[3]}")
+		return plates
 
 	def close_connection(self):
 		self.conn.close()

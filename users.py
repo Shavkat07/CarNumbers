@@ -47,7 +47,7 @@ class User:
 		self.conn.commit()
 		print(f"Пользователь с ID {user_id} удален.")
 
-	def get_user(self, user_id):
+	def get_user(self, user_id) -> dict:
 		self.cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
 		user = self.cursor.fetchone()
 		if user:
@@ -59,15 +59,16 @@ class User:
 				"address": user[2],
 				"purchased_plates": purchased_plates
 			}
-		return None
 
-	def list_users(self):
+
+	def list_users(self) -> list[dict]:
 		"""Вывести список пользователей"""
 		self.cursor.execute("SELECT * FROM users")
 		users = self.cursor.fetchall()
-		for user in users:
-			purchased_plates = json.loads(user[3]) if user[3] else []
-			print(f"ID: {user[0]}, Имя: {user[1]}, Адрес: {user[2]}, Купленные номера: {purchased_plates}")
+		return users
+		# for user in users:
+		# 	purchased_plates = json.loads(user[3]) if user[3] else []
+		# 	print(f"ID: {user[0]}, Имя: {user[1]}, Адрес: {user[2]}, Купленные номера: {purchased_plates}")
 
 	def close_connection(self):
 		"""Закрыть соединение с базой данных"""

@@ -27,13 +27,13 @@ class Sale:
 			""", (plate_id,))
 
 			plate = self.cursor.fetchone()
-			print(plate)
+
 			if plate:
 				if plate[3] == "sold":
-					print("Ошибка: Номерной знак уже продан.")
+					print("Bu raqam allaqachon sotilgan.")
 					return
 			else:
-				print("такой номерной знак не существует")
+				print("Bunaqa raqam mavjud emas.")
 				return
 
 			""" проверка есть ли пользователь """
@@ -43,7 +43,7 @@ class Sale:
 			""", (user_id,))
 			user = self.cursor.fetchone()
 			if not user:
-				print("Ошибка: Пользователь не существует")
+				print("Bunqangi mijoz mavjud emas.")
 				return
 
 			purchased_plates = json.loads(user[3]) if user[3] else []
@@ -69,16 +69,16 @@ class Sale:
 
 		except sqlite3.Error as e:
 			self.conn.rollback()
-			print(f"Ошибка при добавлении продажи: {e}")
+			print(f"Sotuv qo'shishda xatolik yuz berdi: {e}")
 
 		self.conn.commit()
-		print("Продажа успешно добавлен.")
+		print("Sotuv muvaffaqiyatli qo'shildi.")
 
 	def delete_sale(self, sale_id):
 
 		self.cursor.execute("DELETE FROM sales WHERE id = ?", (sale_id,))
 		self.conn.commit()
-		print(f"Продажа с ID {sale_id} удален.")
+		print(f"ID {sale_id} dagi sotuv o'chirildi.")
 
 	def get_sale(self, sale_id) -> dict:
 		self.cursor.execute("SELECT * FROM sales WHERE id = ?", (sale_id,))
@@ -100,6 +100,7 @@ class Sale:
 	def list_sales(self) -> list[dict]:
 		self.cursor.execute("SELECT * FROM sales")
 		sales = self.cursor.fetchall()
+		return sales
 
 	def close_connection(self):
 		"""Закрыть соединение с базой данных"""

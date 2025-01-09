@@ -28,6 +28,9 @@ def main():
             print("Dasturdan chiqish.")
             break
 
+    sale_manager.close_connection()
+    plate_manager.close_connection()
+    user_manager.close_connection()
 
 if __name__ == "__main__":
     try:

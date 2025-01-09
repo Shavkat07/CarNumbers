@@ -22,15 +22,12 @@ class User:
 
 	def add_user(self, name, address,):
 		"""Добавить нового пользователя"""
-		# if (purchased_plates is not None) and isinstance(purchased_plates, list):
-		# 	purchased_plates = json.dumps(purchased_plates)
-
 		self.cursor.execute("""
 	        INSERT INTO users (name, address, purchased_plates) 
 	        VALUES (?, ?, ?)
 	    """, (name, address, '[]'))
 		self.conn.commit()
-		print(f"Пользователь {name} добавлен.")
+		print(f"Mijoz {name} qo'shildi.")
 
 	def edit_user(self, user_id, name=None, address=None):
 		"""Редактировать данные пользователя"""
@@ -39,13 +36,13 @@ class User:
 		if address:
 			self.cursor.execute("UPDATE users SET address = ? WHERE id = ?", (address, user_id))
 		self.conn.commit()
-		print(f"Данные пользователя с ID {user_id} обновлены.")
+		print(f"ID {user_id} dagi mijoz ma'lumotlari yanglinadi.")
 
 	def delete_user(self, user_id):
 		"""Удалить пользователя"""
 		self.cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
 		self.conn.commit()
-		print(f"Пользователь с ID {user_id} удален.")
+		print(f"ID {user_id} dagi mijoz o'chirildi.")
 
 	def get_user(self, user_id) -> dict:
 		self.cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
@@ -66,9 +63,6 @@ class User:
 		self.cursor.execute("SELECT * FROM users")
 		users = self.cursor.fetchall()
 		return users
-		# for user in users:
-		# 	purchased_plates = json.loads(user[3]) if user[3] else []
-		# 	print(f"ID: {user[0]}, Имя: {user[1]}, Адрес: {user[2]}, Купленные номера: {purchased_plates}")
 
 	def close_connection(self):
 		"""Закрыть соединение с базой данных"""

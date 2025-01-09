@@ -24,12 +24,12 @@ class CarPlate:
 		VALUES (?, ?, ?)
 		""", (plate_number.strip(), price, status.strip()))
 		self.conn.commit()
-		print("Номерной знак успешно добавлен.")
+		print("Avtomobil raqami qo'shildi.")
 
 	def delete_number_plate(self, plate_id):
 		self.cursor.execute("DELETE FROM number_plates where id = ?", (plate_id,))
 		self.conn.commit()
-		print(f"Номерной знак с ID {plate_id} удален.")
+		print(f"ID {plate_id} dagi raqam o'chirildi.")
 
 	def get_numbers_by_region(self, region):
 		self.cursor.execute("SELECT * FROM number_plates WHERE plate_number LIKE ?;", (region + "%",))
@@ -58,7 +58,7 @@ class CarPlate:
 					"status": plate[3]
 				}
 		else:
-			print("Номерной знак должен быть с заглавными буквами.")
+			print("Avtomobil raqami katta harflarda bo'lishi kerak.")
 
 	def list_plates(self) -> list[dict]:
 		self.cursor.execute("SELECT * FROM number_plates")

@@ -18,11 +18,11 @@ class CarPlate:
 			 );
 			""")
 
-	def add_number_plate(self, plate_number, price, status="available"):
+	def add_number_plate(self, plate_number: str, price: str, status="available"):
 		self.cursor.execute("""
 		INSERT INTO number_plates (plate_number, price, status)
 		VALUES (?, ?, ?)
-		""", (plate_number, price, status))
+		""", (plate_number.strip(), price, status.strip()))
 		self.conn.commit()
 		print("Номерной знак успешно добавлен.")
 
@@ -30,6 +30,11 @@ class CarPlate:
 		self.cursor.execute("DELETE FROM number_plates where id = ?", (plate_id,))
 		self.conn.commit()
 		print(f"Номерной знак с ID {plate_id} удален.")
+
+	def get_numbers_by_region(self, region):
+		self.cursor.execute("SELECT * FROM number_plates WHERE plate_number LIKE ?;", (region + "%",))
+		plates = self.cursor.fetchall()
+		return plates
 
 	def get_plate_by_id(self, plate_id) -> dict:
 		self.cursor.execute("SELECT * FROM number_plates where id = ?", (plate_id,))

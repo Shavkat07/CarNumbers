@@ -21,10 +21,11 @@ class Sale:
 
 	def add_sale(self, plate_id, user_id, sale_date, plate_manager):
 		try:
-			""" проверка для доступности номера для продажи  """
-			self.cursor.execute("""
-			SELECT * FROM number_plates WHERE id = ?
-			""", (plate_id,))
+			""" Проверка для доступности номера для продажи """
+			with self.conn:
+				self.cursor.execute("""
+		        SELECT * FROM number_plates WHERE id = ?
+		        """, (plate_id,))
 
 			plate = self.cursor.fetchone()
 
@@ -36,11 +37,11 @@ class Sale:
 				print("Bunaqa raqam mavjud emas.")
 				return
 
-			""" проверка есть ли пользователь """
-
-			self.cursor.execute("""
-			SELECT * FROM users WHERE id = ?
-			""", (user_id,))
+			""" Проверка есть ли пользователь """
+			with self.conn:
+				self.cursor.execute("""
+		        SELECT * FROM users WHERE id = ?
+		        """, (user_id,))
 			user = self.cursor.fetchone()
 			if not user:
 				print("Bunqangi mijoz mavjud emas.")
@@ -48,27 +49,29 @@ class Sale:
 
 			purchased_plates = json.loads(user[3]) if user[3] else []
 
-			self.cursor.execute("""
-		    INSERT INTO sales (plate_id, user_id, sale_date) 
-		    VALUES (?, ?, ?)
-		    """, (plate_id, user_id, sale_date))
+			# Добавляем продажу
+			with self.conn:
+				self.cursor.execute("""
+		        INSERT INTO sales (plate_id, user_id, sale_date) 
+		        VALUES (?, ?, ?)
+		        """, (plate_id, user_id, sale_date))
 
+			# Обновляем статус номера
 			plate_manager.edit_plate(plate_id, status="sold")
 
-			self.cursor.execute("""
-			UPDATE users 
-			SET purchased_plates = ? 
-			WHERE id = ?
-			""", (json.dumps(purchased_plates + [plate[1]]), user_id))
+			# Обновляем список купленных номеров пользователя
+			with self.conn:
+				self.cursor.execute("""
+		        UPDATE users 
+		        SET purchased_plates = ? 
+		        WHERE id = ?
+		        """, (json.dumps(purchased_plates + [plate[1]]), user_id))
 
-			self.conn.commit()
+			print("Sotuv muvaffaqiyatli qo'shildi.")
 
 		except sqlite3.Error as e:
-			self.conn.rollback()
+			self.conn.rollback()  # Откатываем изменения при ошибке
 			print(f"Sotuv qo'shishda xatolik yuz berdi: {e}")
-
-		self.conn.commit()
-		print("Sotuv muvaffaqiyatli qo'shildi.")
 
 	def delete_sale(self, sale_id):
 

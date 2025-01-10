@@ -19,17 +19,22 @@ class CarPlate:
 			""")
 
 	def edit_plate(self, plate_id, price=None, status=None):
-		""" Raqam ma'lumotlari yanglinadi """
-		if price:
-			self.cursor.execute("UPDATE number_plates SET price = ? WHERE id = ?", (price, plate_id))
-		if status:
-			if status not in ["available", "sold"]:
-				print("Bunaqa raqam mavjud emas.")
-				return
-			self.cursor.execute("UPDATE number_plates SET status = ? WHERE id = ?", (status, plate_id))
-		self.conn.commit()
-		print(f"ID {plate_id} dagi mijoz ma'lumotlari yanglinadi.")
+		""" Raqam ma'lumotlari yangilanadi """
+		try:
+			if price:
+				with self.conn:
+					self.cursor.execute("UPDATE number_plates SET price = ? WHERE id = ?", (price, plate_id))
+			if status:
+				if status not in ["available", "sold"]:
+					print("Noto'g'ri status kiritildi. Faqat 'available' yoki 'sold' statuslarini ishlating.")
+					return
+				with self.conn:
+					self.cursor.execute("UPDATE number_plates SET status = ? WHERE id = ?", (status, plate_id))
 
+			# Не вызываем commit здесь. Пусть commit выполняется в вызывающем методе.
+			print(f"ID {plate_id} dagi raqam ma'lumotlari yangilandi.")
+		except sqlite3.Error as e:
+			print(f"Raqamni yangilashda xatolik yuz berdi: {e}")
 
 	def add_number_plate(self, plate_number: str, price: str, status="available"):
 		self.cursor.execute("""

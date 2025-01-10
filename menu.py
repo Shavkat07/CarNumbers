@@ -1,11 +1,7 @@
 import json
 from datetime import datetime
 import time
-import os
-
 from number_plates import CarPlate
-from sales import Sale
-from users import User
 
 Viloyatlar = {
     "Toshkent shahri": '10',
@@ -93,7 +89,7 @@ class AdminMenu(Menu):
         while True:
             self.clear_console()
 
-            print("\n=== Asosiy Menu ===")
+            print("\n=== Admin Menu ===")
             print("1. Mijozlarni boshqarish")
             print("2. Avtomobil raqamlarini boshqarish")
             print("3. Savdolarni boshqarish")
@@ -124,7 +120,7 @@ class UserMenu(Menu):
             self.clear_console()
             print("\n=== Mijozlar Menyusi ===")
             print("1. Mijozlarni qo'shish")
-            print("2. Mijozlar ma'lumotlarini ko'rish")
+            print("2. Mijoz ma'lumotini ko'rish")
             print("3. Mijozlarni tahrirlash")
             print("4. Mijozlarni o'chirish")
             print("5. Mijozlar ro'yxati")
@@ -138,7 +134,7 @@ class UserMenu(Menu):
             elif choice == "2":
                 user_id = int(input("Mijoz ID sini kiriting: "))
                 user = self.user_manager.get_user(user_id)
-                print(f"ID: {user[0]}, Ism: {user[1]}, Manzil: {user[2]}, Xarid qilingan raqamlar: {user[3]}")
+                print(f"ID: {user["id"]}, Ism: {user["name"]}, Manzil: {user["address"]}, Xarid qilingan raqamlar: {user['purchased_plates']}")
             elif choice == "3":
                 user_id = int(input("Mijoz ID sini kiriting: "))
                 name = input("Yangi ism (o'kazib yuborish uchun Enter bosing): ")

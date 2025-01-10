@@ -19,7 +19,7 @@ class Sale:
 		""")
 		self.conn.commit()
 
-	def add_sale(self, plate_id, user_id, sale_date):
+	def add_sale(self, plate_id, user_id, sale_date, plate_manager):
 		try:
 			""" проверка для доступности номера для продажи  """
 			self.cursor.execute("""
@@ -53,11 +53,7 @@ class Sale:
 		    VALUES (?, ?, ?)
 		    """, (plate_id, user_id, sale_date))
 
-			self.cursor.execute("""
-		    UPDATE number_plates
-		    SET status = 'sold'
-		    WHERE id = ?
-		    """, (plate_id,))
+			plate_manager.edit_plate(plate_id, status="sold")
 
 			self.cursor.execute("""
 			UPDATE users 

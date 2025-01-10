@@ -12,11 +12,24 @@ class CarPlate:
 			-- Создание таблицы для номерных знаков
 			 CREATE TABLE IF NOT EXISTS number_plates (
 			     id INTEGER PRIMARY KEY AUTOINCREMENT, -- Уникальный идентификатор номерного знака
-			     plate_number TEXT NOT NULL,           -- Номер (например, "01 A 123 AA")
+			     plate_number TEXT NOT NULL UNIQUE,           -- Номер (например, "01 A 123 AA")
 			     price REAL NOT NULL,                  -- Цена номерного знака
 			     status TEXT NOT NULL                  -- Статус (например, "доступен", "продан", "забронирован")
 			 );
 			""")
+
+	def edit_plate(self, plate_id, price=None, status=None):
+		""" Raqam ma'lumotlari yanglinadi """
+		if price:
+			self.cursor.execute("UPDATE number_plates SET price = ? WHERE id = ?", (price, plate_id))
+		if status:
+			if status not in ["available", "sold"]:
+				print("Bunaqa raqam mavjud emas.")
+				return
+			self.cursor.execute("UPDATE number_plates SET status = ? WHERE id = ?", (status, plate_id))
+		self.conn.commit()
+		print(f"ID {plate_id} dagi mijoz ma'lumotlari yanglinadi.")
+
 
 	def add_number_plate(self, plate_number: str, price: str, status="available"):
 		self.cursor.execute("""
@@ -32,7 +45,7 @@ class CarPlate:
 		print(f"ID {plate_id} dagi raqam o'chirildi.")
 
 	def get_numbers_by_region(self, region):
-		self.cursor.execute("SELECT * FROM number_plates WHERE plate_number LIKE ?;", (region + "%",))
+		self.cursor.execute("SELECT * FROM number_plates WHERE plate_number LIKE ? and status = ?;", (region + "%", "available"))
 		plates = self.cursor.fetchall()
 		return plates
 

@@ -26,9 +26,9 @@ Viloyatlar = {
 
 class Menu:
     def clear_console(self):
-        command = 'cls' if os.name == 'nt' else 'clear'
-        os.system(command)
-
+        # command = 'cls' if os.name == 'nt' else 'clear'
+        # os.system(command)
+        pass
 
     def back_to_menu(self):
         while True:
@@ -86,7 +86,7 @@ class AdminMenu(Menu):
     def __init__(self, user_manager, plate_manager, sale_manager):
         self.user_menu = UserMenu(user_manager)
         self.plate_menu = PlateMenu(plate_manager)
-        self.sale_menu = SaleMenu(sale_manager)
+        self.sale_menu = SaleMenu(sale_manager, plate_manager)
 
 
     def display(self):
@@ -94,7 +94,7 @@ class AdminMenu(Menu):
             self.clear_console()
 
             print("\n=== Asosiy Menu ===")
-            print("1. Foydalanuvchilarni boshqarish")
+            print("1. Mijozlarni boshqarish")
             print("2. Avtomobil raqamlarini boshqarish")
             print("3. Savdolarni boshqarish")
             print("0. Chiqish")
@@ -122,12 +122,12 @@ class UserMenu(Menu):
     def display(self):
         while True:
             self.clear_console()
-            print("\n=== Foydalanuvchi Menyusi ===")
-            print("1. Foydalanuvchini qo'shish")
-            print("2. Foydalanuvchi ma'lumotlarini ko'rish")
-            print("3. Foydalanuvchini tahrirlash")
-            print("4. Foydalanuvchini o'chirish")
-            print("5. Foydalanuvchilar ro'yxati")
+            print("\n=== Mijozlar Menyusi ===")
+            print("1. Mijozlarni qo'shish")
+            print("2. Mijozlar ma'lumotlarini ko'rish")
+            print("3. Mijozlarni tahrirlash")
+            print("4. Mijozlarni o'chirish")
+            print("5. Mijozlar ro'yxati")
             print("0. Orqaga")
             choice = input("Biror tanlovni tanlang: ")
 
@@ -136,16 +136,16 @@ class UserMenu(Menu):
                 address = input("Manzilni kiriting: ")
                 self.user_manager.add_user(name, address)
             elif choice == "2":
-                user_id = int(input("Foydalanuvchi ID sini kiriting: "))
+                user_id = int(input("Mijoz ID sini kiriting: "))
                 user = self.user_manager.get_user(user_id)
                 print(f"ID: {user[0]}, Ism: {user[1]}, Manzil: {user[2]}, Xarid qilingan raqamlar: {user[3]}")
             elif choice == "3":
-                user_id = int(input("Foydalanuvchi ID sini kiriting: "))
-                name = input("Yangi ism (skip qilish uchun Enter bosing): ")
-                address = input("Yangi manzil (skip qilish uchun Enter bosing): ")
+                user_id = int(input("Mijoz ID sini kiriting: "))
+                name = input("Yangi ism (o'kazib yuborish uchun Enter bosing): ")
+                address = input("Yangi manzil (o'tkazib yuborish uchun Enter bosing): ")
                 self.user_manager.edit_user(user_id, name or None, address or None)
             elif choice == "4":
-                user_id = int(input("Foydalanuvchi ID sini kiriting: "))
+                user_id = int(input("Mijoz ID sini kiriting: "))
                 self.user_manager.delete_user(user_id)
             elif choice == "5":
                 users = self.user_manager.list_users()
@@ -203,8 +203,9 @@ class PlateMenu(Menu):
 
 
 class SaleMenu(Menu):
-    def __init__(self, sale_manager):
+    def __init__(self, sale_manager, plate_manager):
         self.sale_manager = sale_manager
+        self.plate_manager = plate_manager
 
     def display(self):
         while True:
@@ -212,7 +213,7 @@ class SaleMenu(Menu):
             print("\n=== Savdolar Menyusi ===")
             print("1. Savdo qo'shish")
             print("2. Savdolar ro'yxati")
-            print("3. Foydalanuvchi bo'yicha savdolar ro'yxati")
+            print("3. Mijoz bo'yicha savdolar ro'yxati")
             print("4. Savdoni ID bo'yicha ko'rish")
             print("5. Savdoni o'chirish")
             print("0. Orqaga")
@@ -220,26 +221,26 @@ class SaleMenu(Menu):
 
             if choice == "1":
                 plate_id = int(input("Raqam ID sini kiriting: "))
-                user_id = int(input("Foydalanuvchi ID sini kiriting: "))
+                user_id = int(input("Mijoz ID sini kiriting: "))
                 sale_date = input("Savdo sanasi (dd-mm-yyyy) (Bugungi sana uchun ENTER bosing): ")
-                self.sale_manager.add_sale(plate_id, user_id,
+                self.sale_manager.add_sale(plate_id, user_id, plate_manager=self.plate_manager,
                                            sale_date=sale_date if sale_date else datetime.now().strftime("%d-%m-%Y"))
             elif choice == "2":
                 sales = self.sale_manager.list_sales()
                 for sale in sales:
-                    print(f"ID: {sale[0]}, Raqam ID: {sale[1]}, Foydalanuvchi ID: {sale[2]}, Sana: {sale[3]}")
+                    print(f"ID: {sale[0]}, Raqam ID: {sale[1]}, Mijoz ID: {sale[2]}, Sana: {sale[3]}")
                 self.back_to_menu()
             elif choice == "3":
-                user_id = int(input("Foydalanuvchi ID sini kiriting: "))
+                user_id = int(input("Mijoz ID sini kiriting: "))
                 sales = self.sale_manager.get_sales_by_user_id(user_id=user_id)
                 for sale in sales:
-                    print(f"ID: {sale[0]}, Raqam ID: {sale[1]}, Foydalanuvchi ID: {sale[2]}, Sana: {sale[3]}")
+                    print(f"ID: {sale[0]}, Raqam ID: {sale[1]}, Mijoz ID: {sale[2]}, Sana: {sale[3]}")
                 self.back_to_menu()
             elif choice == "4":
                 sale_id = int(input("Savdo ID sini kiriting: "))
                 sale = self.sale_manager.get_sale(sale_id)
                 if sale:
-                    print(f"ID: {sale['id']}, Raqam ID: {sale['plate_id']}, Foydalanuvchi ID: {sale['user_id']}, Sana: {sale['sale_date']}")
+                    print(f"ID: {sale['id']}, Raqam ID: {sale['plate_id']}, Mijoz ID: {sale['user_id']}, Sana: {sale['sale_date']}")
                     self.back_to_menu()
                 else:
                     print("Savdo topilmadi.")

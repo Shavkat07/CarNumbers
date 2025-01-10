@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 import time
 from number_plates import CarPlate
-
+import os
 Viloyatlar = {
     "Toshkent shahri": '10',
     "Toshkent viloyati": '01',
@@ -22,9 +22,9 @@ Viloyatlar = {
 
 class Menu:
     def clear_console(self):
-        # command = 'cls' if os.name == 'nt' else 'clear'
-        # os.system(command)
-        pass
+        command = 'cls' if os.name == 'nt' else 'clear'
+        os.system(command)
+        # pass
 
     def back_to_menu(self):
         while True:
